@@ -1,6 +1,10 @@
 const response = await fetch('main.wasm');
 const wasm_module = await WebAssembly.compile(await response.arrayBuffer())
-const gol_wasm = (await WebAssembly.instantiate(wasm_module)).exports
+const gol_wasm = (await WebAssembly.instantiate(wasm_module, {
+    coolio: {
+      log2: (x, y) => console.log(x, y),
+    },
+  })).exports
 
 console.log(gol_wasm.helloWorld())
 
@@ -29,7 +33,7 @@ function drawBoard(){
 drawBoard();
 
 function canvasClicked(e) {
-  const [i, j] = [Math.floor(e.offsetX / 10), Math.floor(e.offsetY / 10)]
+  const [i, j] = [Math.floor(e.offsetX / p), Math.floor(e.offsetY / p)]
   if (e.buttons == 1) {
     drawRectangle(i, j, 1)
     gol_wasm.setCell(i, j, 1);
@@ -65,5 +69,8 @@ create_button("clear_board", (e) => {fill_board();drawBoard()})
 create_button("fill_board", (e) => {fill_board(1);drawBoard()})
 
 var myInterval
-create_button("start", (e) => {myInterval = setInterval(()=>{console.log("hi")}, 500)})
+var duration = 100
+create_button("start", (e) => {myInterval = setInterval(()=>{gol_wasm.tick();drawBoard()}, duration)})
 create_button("pause", (e) => {clearInterval(myInterval)})
+
+create_button("tick", (e) => {gol_wasm.tick();drawBoard()})
