@@ -1,0 +1,23 @@
+{
+  "scripts": {
+    "start": "node livereloader.mjs & nodemon server.mjs & nodemon -e wat compile.mjs && fg",
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js *.wat *.js --watchAll"
+  },
+  "dependencies": {
+    "connect-livereload": "^0.6.1",
+    "express": "^4.18.1",
+    "livereload": "^0.9.3",
+    "morgan": "^1.10.0",
+    "wabt": "^1.0.29"
+  },
+  "devDependencies": {
+    "jest": "^29.0.1",
+    "nodemon": "^2.0.19"
+  },
+  "jest": {
+    "moduleFileExtensions": ["wat", "mjs", "js", "jsx", "ts", "tsx", "json", "node"],
+    "testMatch": ["**/?(*.)test.?js"],
+    "testEnvironment": "jest-environment-node",
+    "transform": {}
+  }
+}
