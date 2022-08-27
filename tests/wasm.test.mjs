@@ -32,9 +32,9 @@ test("offsetFromCoordinate", () => {
 test("get / set cell", () => {
   // check that linear memory initialises to zero
   expect(wasm.getCell(2, 2)).toBe(0);
-  // set and expect
-  wasm.setCell(2, 2, 1);
-  expect(wasm.getCell(2, 2)).toBe(1);
+  // setCell returns 1 when set is succesfull
+  expect(wasm.setCell(2, 2, 5)).toBe(1);
+  expect(wasm.getCell(2, 2)).toBe(5);
 });
 
 test("read memory directly", () => {
@@ -42,4 +42,14 @@ test("read memory directly", () => {
   wasm.setCell(2, 2, 11);
   expect(memory[2 + 2 * 50]).toBe(11);
   expect(memory[3 + 2 * 50]).toBe(0);
+});
+
+test("test boundaries", () => {
+  const memory = new Uint32Array(wasm.memory.buffer, 0, 50 * 50);
+  expect(wasm.setCell(0, 0, 1)).toBe(1);
+  // setCell returns 0 when set failed
+  expect(wasm.setCell(-1,-1, 1)).toBe(0);
+  expect(wasm.setCell(50, 0, 1)).toBe(0);
+  expect(wasm.setCell(0, 50, 1)).toBe(0);
+  expect(wasm.setCell(50,50, 1)).toBe(0);
 });
