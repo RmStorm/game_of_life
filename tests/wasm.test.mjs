@@ -30,10 +30,6 @@ beforeEach(async () => {
   wasm = await instantiate();
 });
 
-test("Wasm hello world returns 42", () => {
-  expect(wasm.helloWorld()).toBe(42);
-});
-
 test("offsetFromCoordinate", () => {
   // expect(wasm.offsetFromCoordinate(42, 0)).toBe(42);
   expect(wasm.offsetFromCoordinate(0, 0)).toBe(8 + 0);

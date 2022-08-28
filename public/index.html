@@ -7,7 +7,16 @@
 </head>
 <body>
   <h1>Conway in action</h1>
-  <div id="buttons"></div>
+  <div id="buttons">
+    <div>
+      <input type="range" min="10" max="150" value="50" class="slider" id="xSize">
+      <label for="xSize" id="xSizeLabel">X size</label>
+      <input type="range" min="10" max="100" value="50" class="slider" id="ySize">
+      <label for="ySize" id="ySizeLabel">Y size</label>
+    </div>
+    <input type="range" min="10" max="500" value="100" class="slider" id="intervalSlider">
+    <label for="intervalSlider" id="intervalSliderLabel">interval</label>
+  </div>
   <canvas id="canvas"/>
   <script type="module" src="index.mjs"></script>
 </body>

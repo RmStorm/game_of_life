@@ -3,10 +3,6 @@
 
   (memory (export "memory") 1)
 
-  (func (export "helloWorld") (result i32)
-    (i32.const 42)
-  )
-
   (func $setSize (export "setSize")
     (param $xSize i32) (param $ySize i32)
     (i32.store
@@ -19,7 +15,7 @@
     )
   )
   (func $main
-    (call $setSize (i32.const 52) (i32.const 52))
+    (call $setSize (i32.const 50) (i32.const 50))
   )
   (start $main)
 
