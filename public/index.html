@@ -6,16 +6,17 @@
   <link rel="stylesheet" href="">
 </head>
 <body>
-  <h1>Conway in action</h1>
+  <h1>Conway in action - The Game Of Life</h1>
   <div id="buttons">
     <div>
-      <input type="range" min="10" max="150" value="50" class="slider" id="xSize">
+      <input type="range" min="10" max="750" value="50" class="slider" id="xSize">
       <label for="xSize" id="xSizeLabel">X size</label>
-      <input type="range" min="10" max="100" value="50" class="slider" id="ySize">
+      <input type="range" min="10" max="500" value="50" class="slider" id="ySize">
       <label for="ySize" id="ySizeLabel">Y size</label>
+      <span id=fps>fps:</span>
     </div>
-    <input type="range" min="10" max="500" value="100" class="slider" id="intervalSlider">
-    <label for="intervalSlider" id="intervalSliderLabel">interval</label>
+    <input type="range" min="0" max="500" value="100" class="slider" id="intervalSlider">
+    <label for="intervalSlider" id="intervalSliderLabel">delay</label>
   </div>
   <canvas id="canvas"/>
   <script type="module" src="index.mjs"></script>

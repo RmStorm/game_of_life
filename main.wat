@@ -1,7 +1,8 @@
+;; Inspired by / copied from : https://blog.scottlogic.com/2018/04/26/webassembly-by-hand.html
 (module
   (import "coolio" "log2" (func $log (param i32) (param i32)))
 
-  (memory (export "memory") 1)
+  (memory (export "memory") 100)
 
   (func $setSize (export "setSize")
     (param $xSize i32) (param $ySize i32)
@@ -147,21 +148,21 @@
       (local.get $x)
       (local.get $y)
       ;; Equal to 3 off course ^^ go figure
-      (i32.eq
-        (i32.or
-          (i32.and
-            (call $liveNeighbourCount (local.get $x) (local.get $y))
-            (i32.const 3)
-          )
+      (i32.or
+        (i32.eq
+          (call $liveNeighbourCount (local.get $x) (local.get $y))
+          (i32.const 3)
+        )
+        (i32.eq
           (i32.add
-            (i32.and
+            (i32.eq
               (call $liveNeighbourCount (local.get $x) (local.get $y))
               (i32.const 2)
             )
             (call $isCellAlive (local.get $x) (local.get $y))
           )
+          (i32.const 2)
         )
-        (i32.const 3)
       )
     )
   )

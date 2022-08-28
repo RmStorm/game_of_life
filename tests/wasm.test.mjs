@@ -145,6 +145,28 @@ test("evolveCellToNextGeneration", () => {
   wasm.setCell(2, 1, 1);
   wasm.setCell(1, 1, 1);
   expect(wasm.liveNeighbourCount(2, 2)).toBe(3);
+  expect(wasm.getCell(2, 2)).toBe(0b00);
   wasm.evolveCellToNextGeneration(2, 2);
   expect(wasm.getCell(2, 2)).toBe(0b10);
+});
+
+
+test("gunProblem", () => {
+  wasm.setCell(5, 5, 1)
+  wasm.setCell(5, 6, 1)
+  wasm.setCell(5, 7, 1)
+
+  wasm.setCell(6, 4, 1)
+  wasm.setCell(6, 8, 1)
+
+  wasm.setCell(7, 3, 1)
+  wasm.setCell(8, 3, 1)
+  wasm.setCell(7, 9, 1)
+  wasm.setCell(8, 9, 1)
+
+  wasm.tick()
+  expect(wasm.liveNeighbourCount(5, 6)).toBe(6);
+  expect(wasm.getCell(5, 6)).toBe(0b01);
+  wasm.tick()
+  expect(wasm.getCell(5, 6)).toBe(0b00);
 });

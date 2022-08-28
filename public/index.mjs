@@ -1,5 +1,3 @@
-// import { performance } from 'perf_hooks';
-
 const response = await fetch('main.wasm');
 const wasm_module = await WebAssembly.compile(await response.arrayBuffer())
 const gol_wasm = (await WebAssembly.instantiate(wasm_module, {
@@ -8,10 +6,23 @@ const gol_wasm = (await WebAssembly.instantiate(wasm_module, {
     },
   })).exports
 
+var canvas = document.getElementById("canvas");
+var ctx = canvas.getContext("2d");
+
 var width = 50;
 var height = 50;
 var p = 15;
 var hasEdge = true;
+
+var fps = document.getElementById("fps");
+var intervalSlider = document.getElementById("intervalSlider");
+var intervalSliderLabel = document.getElementById("intervalSliderLabel");
+var xSlider = document.getElementById("xSize");
+var ySlider = document.getElementById("ySize");
+
+var myInterval
+var duration=intervalSlider.value
+intervalSliderLabel.innerHTML = `delay: ${duration}`;
 
 function drawRectangle(i,j,fill=0){
   ctx.fillStyle = fill==1 ? "green" : "white";
@@ -32,6 +43,7 @@ function drawBoard(){
 function resizePixel(){
   const {w, h} = getViewportSize()
   const rect = canvas.getBoundingClientRect();
+
   p=15
   if (rect.top + height*p > h) {
     p = Math.floor((h-rect.top)/height)
@@ -42,7 +54,6 @@ function resizePixel(){
   }
 }
 
-var canvas = document.getElementById("canvas");
 function resizeCanvas(){
   width=xSlider.value
   height=ySlider.value
@@ -52,13 +63,6 @@ function resizeCanvas(){
   canvas.height = height*p
   drawBoard();
 }
-var ctx = canvas.getContext("2d");
-
-var xSlider = document.getElementById("xSize");
-xSlider.oninput = (e) => {resizeCanvas()}
-var ySlider = document.getElementById("ySize");
-ySlider.oninput = (e) => {resizeCanvas()}
-
 
 resizeCanvas();
 
@@ -77,7 +81,7 @@ canvas.addEventListener("mousemove", canvasClicked);
 canvas.addEventListener("mousedown", canvasClicked);
 
 document.body.addEventListener("contextmenu", (e) => {
-  if (e.target.id === canvas.id) {e.preventDefault(); return}
+  if (e.target.id === canvas.id) {e.preventDefault()}
 });
 
 function fill_board(fill=0) {
@@ -86,6 +90,7 @@ function fill_board(fill=0) {
       gol_wasm.setCell(i, j, fill);
     }
   }
+  drawBoard()
 }
 
 function create_button(text, callback) {
@@ -95,33 +100,48 @@ function create_button(text, callback) {
   document.getElementById("buttons").appendChild(btn)
 }
 
-create_button("clear_board", (e) => {fill_board();drawBoard()})
-create_button("fill_board", (e) => {fill_board(1);drawBoard()})
+create_button("clear_board", (e) => {fill_board()})
+create_button("fill_board", (e) => {fill_board(1)})
 
-var myInterval
-var duration = 100
-
-const start = () => {
-  clearInterval(myInterval)
-  gol_wasm.tick();
-  drawBoard()
-  myInterval = setInterval(()=>{gol_wasm.tick();drawBoard()}, duration)
+const tick = () => {
+  gol_wasm.tick()
+  window.requestAnimationFrame(playAnimation)
 }
-create_button("start", (e) => {start()})
-create_button("pause", (e) => {clearInterval(myInterval)})
-create_button("tick", (e) => {gol_wasm.tick();drawBoard()})
-create_button("toggle edge", (e) => {hasEdge = !hasEdge;drawBoard()})
 
-var slider = document.getElementById("intervalSlider");
-var sliderLabel = document.getElementById("intervalSliderLabel");
-slider.oninput = (e) => {
-  duration=slider.value
-  start()
-  sliderLabel.innerHTML = `interval: ${duration}`;
+const loop = () => {
+   setTimeout(() => {
+      tick()
+      if (duration < 1500){
+        loop();
+      }
+      console.log("pause", duration)
+  }, duration);
+};
+
+var lastTime = 0
+function playAnimation(time) {
+  const delay = time - lastTime
+  if (delay != 0){
+    drawBoard()
+    fps.innerHTML = `fps: ${Math.floor(10000/(delay))/10}`;
+  }
+  lastTime = time
 }
+
+create_button("start", (e) => {duration=intervalSlider.value;loop()})
+create_button("pause", (e) => {duration = 1500})
+create_button("tick", (e) => {tick()})
+create_button("toggle grid edges", (e) => {hasEdge = !hasEdge;drawBoard()})
+
+intervalSlider.oninput = (e) => {
+  duration=intervalSlider.value
+  tick()
+  intervalSliderLabel.innerHTML = `delay: ${duration}`;
+}
+xSlider.oninput = (e) => {resizeCanvas()}
+ySlider.oninput = (e) => {resizeCanvas()}
 
 function getViewportSize(w) {
-
     // Use the specified window or the current window if no argument
     w = w || window;
 
@@ -136,5 +156,58 @@ function getViewportSize(w) {
 
     // For browsers in Quirks mode
     return { w: d.body.clientWidth, h: d.body.clientHeight };
-
 }
+
+function createGliderGun(){
+  fill_board()
+  gol_wasm.setCell(10, 15, 1)
+  gol_wasm.setCell(10, 16, 1)
+  gol_wasm.setCell(11, 15, 1)
+  gol_wasm.setCell(11, 16, 1)
+
+  gol_wasm.setCell(20, 15, 1)
+  gol_wasm.setCell(20, 16, 1)
+  gol_wasm.setCell(20, 17, 1)
+
+  gol_wasm.setCell(21, 14, 1)
+  gol_wasm.setCell(21, 18, 1)
+
+  gol_wasm.setCell(22, 13, 1)
+  gol_wasm.setCell(23, 13, 1)
+  gol_wasm.setCell(22, 19, 1)
+  gol_wasm.setCell(23, 19, 1)
+
+  gol_wasm.setCell(24, 16, 1)
+
+  gol_wasm.setCell(25, 14, 1)
+  gol_wasm.setCell(25, 18, 1)
+
+  gol_wasm.setCell(26, 15, 1)
+  gol_wasm.setCell(26, 16, 1)
+  gol_wasm.setCell(26, 17, 1)
+  gol_wasm.setCell(27, 16, 1)
+
+  gol_wasm.setCell(30, 13, 1)
+  gol_wasm.setCell(30, 14, 1)
+  gol_wasm.setCell(30, 15, 1)
+  gol_wasm.setCell(31, 13, 1)
+  gol_wasm.setCell(31, 14, 1)
+  gol_wasm.setCell(31, 15, 1)
+
+  gol_wasm.setCell(32, 12, 1)
+  gol_wasm.setCell(32, 16, 1)
+
+  gol_wasm.setCell(34, 11, 1)
+  gol_wasm.setCell(34, 12, 1)
+  gol_wasm.setCell(34, 16, 1)
+  gol_wasm.setCell(34, 17, 1)
+
+  gol_wasm.setCell(44, 13, 1)
+  gol_wasm.setCell(44, 14, 1)
+  gol_wasm.setCell(45, 13, 1)
+  gol_wasm.setCell(45, 14, 1)
+
+  drawBoard()
+}
+create_button("make gun", (e) => {createGliderGun()})
+createGliderGun()
