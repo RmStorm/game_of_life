@@ -11,7 +11,7 @@ app.use(logger("dev"))
 app.use(connectLivereload());
 app.use(express.static(path.join(CWD, 'public')));
 
-app.listen(port, () => console.log(`The server is listening on port ${port}`))
+app.listen(port, () => console.log(`The server is listening on ${port}`))
 
 app.get("/", (req, res) => {
   res.redirect('index.html');

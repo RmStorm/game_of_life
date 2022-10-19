@@ -12,7 +12,7 @@ function recompileWasm () {
   const wasmModule = wabt.parseWat(inputWat, readFileSync(inputWat, "utf8"));
   const { buffer } = wasmModule.toBinary({});
   writeFileSync(outputWasm, buffer);
-  console.log("wasm recompiled and saved!");
+  console.log("wasm recompiled and saved!!");
 }
 
 if (fileURLToPath(import.meta.url) === process.argv[1]) {
